@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_RPIGPIO
+	bool "python-rpigpio"
+	depends on BR2_PACKAGE_PYTHON
+	help
+	  python-rpigpio is a Python library to access raspberry hardware layer.
+
+          http://www.google.de
+
