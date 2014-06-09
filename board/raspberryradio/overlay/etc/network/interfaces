@@ -1,0 +1,16 @@
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+
+allow-hotplug wlan0
+iface wlan0 inet manual
+	pre-up wpa_supplicant -Dwext -i wlan0 -c /etc/wpa_supplicant.conf -B
+	#pre-up udhcpc -i wlan0 -x hostname:raspradio -S -s /usr/share/udhcpc/default.script
+	post-down killall -q wpa_supplicant
+
+iface default inet static
+	address 192.168.178.12
+	netmask 255.255.255.0
+	gateway 192.168.178.1
