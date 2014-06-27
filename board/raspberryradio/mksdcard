@@ -80,17 +80,8 @@ fi
 
 # sanity check
 
-#if [ ! -d "images/rpi-firmware" ] || [ ! -f "images/rootfs.tar" ]; then
-#	if [ -d "output/images/rpi-firmware" ] && [ -f "output/images/rootfs.tar" ]; then
-#		OUTPUT_PREFIX="output/"
-#	else
-#		echo "Didn't find boot and/or rootfs.tar! ABORT."
-#		exit 1
-#	fi
-#fi
-
-if [ ! -d "images/rpi-firmware" ]; then
-	if [ -d "output/images/rpi-firmware" ]; then
+if [ ! -d "images/rpi-firmware" ] || [ ! -f "images/rootfs.tar" ]; then
+	if [ -d "output/images/rpi-firmware" ] && [ -f "output/images/rootfs.tar" ]; then
 		OUTPUT_PREFIX="output/"
 	else
 		echo "Didn't find boot and/or rootfs.tar! ABORT."
@@ -154,10 +145,10 @@ sync
 
 section "Populating rootfs partition..."
 
-#mount "${SDCARD}2" .mnt || exit 2
-#${TAR} -xpsf ${OUTPUT_PREFIX}images/rootfs.tar -C .mnt
-#umount .mnt
-#sync
+mount "${SDCARD}2" .mnt || exit 2
+${TAR} -xpsf ${OUTPUT_PREFIX}images/rootfs.tar -C .mnt
+umount .mnt
+sync
 
 # clean up
 
