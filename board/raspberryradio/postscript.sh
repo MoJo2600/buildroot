@@ -1,6 +1,7 @@
 #!/bin/sh
 
 TARGET="${1}"
+BR_ROOT=$PWD
 
 # copy System.map
 cp ${TARGET}/../build/linux-rpi-3.12.y/System.map ${TARGET}/System.map
@@ -14,6 +15,9 @@ mv ${TARGET}/etc/init.d/S40network ${TARGET}/etc/init.d/S90network
 # move resolv.conf
 rm ${TARGET}/etc/resolv.conf
 mv ${TARGET}/etc/resolv.conf_bkp ${TARGET}/etc/resolv.conf
+
+cp ${BR_ROOT}/board/raspberryradio/cmdline.txt ${TARGET}/../images/rpi-firmware/
+cp ${BR_ROOT}/board/raspberryradio/config.txt ${TARGET}/../images/rpi-firmware/
 
 exit 0
 
