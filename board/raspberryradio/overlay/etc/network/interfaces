@@ -1,15 +1,2 @@
-auto wlan0
-
+auto lo
 iface lo inet loopback
-iface eth0 inet dhcp
-
-allow-hotplug wlan0
-iface wlan0 inet static
-	pre-up wpa_supplicant -Dwext -i wlan0 -c /etc/wpa_supplicant.conf -B
-	post-down killall -q wpa_supplicant
-        address 192.168.178.11
-        netmask 255.255.255.0
-        dns-nameservers 8.8.8.8
-        gateway 192.168.178.1
-
-iface default inet dhcp

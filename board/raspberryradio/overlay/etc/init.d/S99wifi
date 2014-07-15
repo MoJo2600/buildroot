@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# Start the wifi connection....
+#
+
+case "$1" in
+  start)
+ 	echo "Starting wifi..."
+	/sbin/network.sh &>/dev/null
+	;;
+  stop)
+	echo -n "Stopping wifi..."
+	killall -p network.sh
+	;;
+  restart|reload)
+	"$0" stop
+	"$0" start
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?
+
