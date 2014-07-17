@@ -1,14 +1,15 @@
 #!/bin/ash
 
-. /sdcard/conf/wifi.conf
+. /sdcard/conf/network.conf
 
 startWifi() {
   ifdown -f $iface
   killall -q wpa_supplicant
-  wpa_supplicant -Dwext -i $iface -c /etc/wpa_supplicant.conf -B
+  wpa_supplicant -Dwext -i $iface -c /sdcard/conf/wifi.conf -B
   ifconfig $iface $ip netmask $netmask up
   route add default gw $gateway
   sleep 30
+  
 }
 
 startWifi
