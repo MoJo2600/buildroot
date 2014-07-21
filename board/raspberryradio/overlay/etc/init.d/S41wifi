@@ -6,13 +6,15 @@
 case "$1" in
   start)
  	echo "Starting wifi..."
-	/sbin/network.sh &>/dev/null
+	/sbin/network.sh start
+        echo "Starting to monitor wifi connection..."
+        /sbin/network.sh monitor &>/var/log/wifi.log
 	;;
   stop)
 	echo -n "Stopping wifi..."
 	killall -p network.sh
 	;;
-  restart|reload)
+  restart|restart)
 	"$0" stop
 	"$0" start
 	;;
