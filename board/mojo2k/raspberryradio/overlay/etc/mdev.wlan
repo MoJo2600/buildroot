@@ -1,0 +1,12 @@
+#!/bin/sh
+
+case "$ACTION" in
+        add | "" )
+                echo "trying to bring $MDEV up"
+                ifup $MDEV
+                ;;
+ 	remove )
+		echo "trying to bring $MDEV down"
+		ifdown -f $MDEV
+		;;
+esac       

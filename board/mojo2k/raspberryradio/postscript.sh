@@ -19,9 +19,10 @@ mv ${TARGET}/../images/zImage ${TARGET}/../images/rpi-firmware/
 
 cp ${BR_ROOT}/board/raspberryradio/cmdline.txt ${TARGET}/../images/rpi-firmware/
 cp ${BR_ROOT}/board/raspberryradio/config.txt ${TARGET}/../images/rpi-firmware/
+cp -Rfv ${BR_ROOT}/board/raspberryradio/sdcard ${TARGET}/../images
 
 # Add mountpoint for second partition
-echo "/dev/mmblk0p2	/sdcard	ext4	rw,auto	0	0" >> ${TARGET}/etc/fstab
-
+echo "/dev/mmcblk0p2	/sdcard	ext4	rw,auto	0	0" >> ${TARGET}/etc/fstab
+echo "wlan[0-9]*      0:0 0660 */etc/mdev.wlan" >> ${TARGET}/etc/mdev.conf
 exit 0
 
