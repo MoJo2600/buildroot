@@ -6,10 +6,12 @@
 #
 
 SDCARD="${1}"
+PARAM_VOLATILE="${2}"
 
 usage() {
-	echo "Usage: ${0} [SDCARD]"
+	echo "Usage: ${0} [SDCARD] (non-volatile)"
 	echo "Where SDCARD is your SD card device node, for example: /dev/sdx"
+        echo "and optional non-volatile for a non volatile fs"
 	echo
 	echo "You will require *root* privileges in order to use this script."
 	echo
@@ -63,6 +65,11 @@ if [ ${EUID} -ne 0 ]; then
 fi
 
 # dependencies
+VOLATILE=true
+if [ -z "${PARAM_VOLATILE}" ] && [ ${PARAM_VOLATILE} -eq "non-volatile" ]; then
+       echo "non-volatile fs"
+       $VOLATILE = false
+fi
 
 FDISK=`which fdisk`
 MKFS_EXT4=`which mkfs.ext4`
@@ -148,12 +155,15 @@ sync
 
 # fill rootfs
 
-#section "Populating rootfs partition..."
+section "Populating rootfs partition..."
 
-#mount "${SDCARD}2" .mnt || exit 2
-#${TAR} -xpsf ${OUTPUT_PREFIX}images/rootfs.tar -C .mnt
-#umount .mnt
-#sync
+mount "${SDCARD}2" .mnt || exit 2
+if [ $VOLATILE=false ]; then
+${TAR} -xpsf ${OUTPUT_PREFIX}images/rootfs.tar -C .mnt
+fi
+cp -R ${OUTPUT_PREFIX}images/sdcard/ .mnt
+umount .mnt
+sync
 
 # clean up
 
