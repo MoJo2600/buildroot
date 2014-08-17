@@ -524,6 +524,7 @@ menu "external python modules"
 	source "package/python-urwid/Config.in"
 	source "package/python-versiontools/Config.in"
 	source "package/python-rpigpio/Config.in"
+	source "package/python-mpdlcd/Config.in"
 endmenu
 endif
 	source "package/ruby/Config.in"

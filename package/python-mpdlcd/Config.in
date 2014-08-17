@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_MPDLCD
+	bool "python-mpdlcd"
+	depends on BR2_PACKAGE_PYTHON 
+        select BR2_PACKAGE_PYTHON_SETUPTOOLS
+	help
+	  Display MPD status on a lcdproc server.
+
+          https://pypi.python.org/pypi/mpdlcd/0.4.0
+
