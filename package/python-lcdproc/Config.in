@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_LCDPROC
+	bool "python-lcdproc"
+	depends on BR2_PACKAGE_PYTHON 
+	help
+	  Python OOP Wrapper Library for LCDproc Telnet API
+
+          https://pypi.python.org/pypi/lcdproc/0.03
+
