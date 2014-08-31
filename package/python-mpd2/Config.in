@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_MPD2
+	bool "python-mpd2"
+	depends on BR2_PACKAGE_PYTHON 
+        select BR2_PACKAGE_PYTHON_SETUPTOOLS
+	help
+	  A Python MPD client library.
+
+          https://pypi.python.org/pypi/python-mpd2
+
