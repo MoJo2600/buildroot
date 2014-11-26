@@ -7,12 +7,10 @@
 
 
 SDCARD="${1}"
-PARAM_VOLATILE="${2}"
 
 usage() {
 	echo "Usage: ${0} [SDCARD] (--non-volatile)"
 	echo "Where SDCARD is your SD card device node, for example: /dev/sdx"
-        echo "and optional non-volatile for a non volatile fs"
 	echo
 	echo "You will require *root* privileges in order to use this script."
 	echo
@@ -65,13 +63,6 @@ if [ ${EUID} -ne 0 ]; then
 	exit 0
 fi
 
-# dependencies
-VOLATILE=true
-if [ "${PARAM_VOLATILE}" == "--non-volatile" ]; then
-       echo "non-volatile fs"
-       VOLATILE=false
-fi
-
 FDISK=`which fdisk`
 MKFS_EXT4=`which mkfs.ext4`
 MKFS_VFAT=`which mkfs.vfat`
@@ -107,16 +98,42 @@ confirm
 
 section "Partitioning SD card..."
 
+CYLINDERS=$(fdisk -l | awk -vpattern=$SDCARD '$1=="Disk" && $2 ~ pattern {print $5}')
+echo "Size of ${SDCARD} in bytes ${CYLINDERS}"
+CYLINDERS=$(echo "scale=0; ${CYLINDERS}/63/255/512" | bc)
+echo "Working with ${CYLINDERS} cylinders"
+
 ${FDISK} ${SDCARD} <<END
 o
+x
+h
+255
+
+s
+63
+
+c
+$CYLINDERS
+
+r
 n
 p
 1
 
-+100M
++50M
 n
 p
 2
+
++100M
+n
+p
+3
+
++100M
+n
+p
+4
 
 
 t
@@ -124,6 +141,8 @@ t
 e
 a
 1
+x
+p
 w
 END
 
@@ -134,44 +153,51 @@ sleep 1
 
 section "Formatting partitions..."
 
+# TODO: bootpartition for u-boot, rootfsa and rootfsb for system / update
+
 ${MKFS_VFAT} -F 16 -n BOOT -I "${SDCARD}1" || exit 1
-${MKFS_EXT4} -L rootfs "${SDCARD}2" || exit 1
-${TUNE2FS} -o journal_data_writeback "${SDCARD}2"
-${TUNE2FS} -O ^has_journal "${SDCARD}2"
+${MKFS_EXT4} -L ROOTFSA "${SDCARD}2" || exit 1
+${MKFS_EXT4} -L ROOTFSB "${SDCARD}3" || exit 1
+${MKFS_EXT4} -L USER "${SDCARD}4" || exit 1
+
+# No journal, write directly to card for user data
+${TUNE2FS} -o journal_data_writeback "${SDCARD}4"
+${TUNE2FS} -O ^has_journal "${SDCARD}4"
 sync
 
 # prepare to fill partitions
 
 mkdir .mnt
 
-# fill boot
+# fill boot / rootfs / user
 
 section "Populating boot partition..."
 
 mount "${SDCARD}1" .mnt || exit 2
+cp ${OUTPU_PREFIX}images/u-boot.bin .mnt
+# TODO what else?
+umount .mnt
+
+section "Populating rootfsA partition..."
+
+mount "${SDCARD}2" .mnt || exit 2
 cp ${OUTPUT_PREFIX}images/rpi-firmware/* .mnt
 cp ${OUTPUT_PREFIX}images/zImage .mnt
+umount .mnt
 
-if ! $VOLATILE; then
-echo -e "$(cat .mnt/cmdline.txt) root=/dev/mmcblk0p2" > .mnt/cmdline.txt
-else
-# Add mountpoint for second partition
-echo "/dev/mmcblk0p2    /sdcard ext4    rw,auto 0       0" >> .mnt/etc/fstab
-fi
+section "Populating rootfsB partition..."
 
-# nasshare
-echo "192.168.178.10:/c/media             /mnt/media     nfs     _netdev,defaults,user,auto,noatime,intr   0 0" >> .mnt/etc/fstab
+mount "${SDCARD}3" .mnt || exit 2
+cp ${OUTPUT_PREFIX}images/rpi-firmware/* .mnt
+cp ${OUTPUT_PREFIX}images/zImage .mnt
 umount .mnt
 sync
 
 # fill rootfs
 
-section "Populating rootfs partition..."
+section "Populating writable user partition..."
 
 mount "${SDCARD}2" .mnt || exit 2
-if ! $VOLATILE; then
-${TAR} -xpsf ${OUTPUT_PREFIX}images/rootfs.tar -C .mnt
-fi
 cp -Rfv ${OUTPUT_PREFIX}images/sdcard/ .mnt
 umount .mnt
 sync

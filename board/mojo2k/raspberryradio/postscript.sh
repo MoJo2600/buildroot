@@ -4,7 +4,7 @@ TARGET="${1}"
 BR_ROOT=$PWD
 
 # copy System.map
-cp ${TARGET}/../build/linux-rpi-3.12.y/System.map ${TARGET}/System.map
+cp ${TARGET}/../build/linux-rpi-3.17.y/System.map ${TARGET}/System.map
 
 # move kernel
 mv ${TARGET}/../images/zImage ${TARGET}/../images/rpi-firmware/
