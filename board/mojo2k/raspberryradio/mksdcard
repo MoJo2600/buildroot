@@ -139,6 +139,12 @@ p
 t
 1
 e
+t
+2
+e
+t
+3
+e
 a
 1
 x
@@ -156,8 +162,8 @@ section "Formatting partitions..."
 # TODO: bootpartition for u-boot, rootfsa and rootfsb for system / update
 
 ${MKFS_VFAT} -F 16 -n BOOT -I "${SDCARD}1" || exit 1
-${MKFS_EXT4} -L ROOTFSA "${SDCARD}2" || exit 1
-${MKFS_EXT4} -L ROOTFSB "${SDCARD}3" || exit 1
+${MKFS_VFAT} -F 16 -n ROOTFSA -I "${SDCARD}2" || exit 1
+${MKFS_VFAT} -F 16 -n ROOTFSB -I "${SDCARD}3" || exit 1
 ${MKFS_EXT4} -L USER "${SDCARD}4" || exit 1
 
 # No journal, write directly to card for user data
@@ -174,21 +180,19 @@ mkdir .mnt
 section "Populating boot partition..."
 
 mount "${SDCARD}1" .mnt || exit 2
-cp ${OUTPU_PREFIX}images/u-boot.bin .mnt
-# TODO what else?
+cp ${OUTPUT_PREFIX}images/rpi-firmware/* .mnt
+#cp ${OUTPUT_PREFIX}images/boot/* .mnt
 umount .mnt
 
 section "Populating rootfsA partition..."
 
 mount "${SDCARD}2" .mnt || exit 2
-cp ${OUTPUT_PREFIX}images/rpi-firmware/* .mnt
 cp ${OUTPUT_PREFIX}images/zImage .mnt
 umount .mnt
 
 section "Populating rootfsB partition..."
 
 mount "${SDCARD}3" .mnt || exit 2
-cp ${OUTPUT_PREFIX}images/rpi-firmware/* .mnt
 cp ${OUTPUT_PREFIX}images/zImage .mnt
 umount .mnt
 sync
@@ -197,7 +201,7 @@ sync
 
 section "Populating writable user partition..."
 
-mount "${SDCARD}2" .mnt || exit 2
+mount "${SDCARD}4" .mnt || exit 2
 cp -Rfv ${OUTPUT_PREFIX}images/sdcard/ .mnt
 umount .mnt
 sync
