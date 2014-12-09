@@ -181,19 +181,20 @@ section "Populating boot partition..."
 
 mount "${SDCARD}1" .mnt || exit 2
 cp ${OUTPUT_PREFIX}images/rpi-firmware/* .mnt
-#cp ${OUTPUT_PREFIX}images/boot/* .mnt
 umount .mnt
 
 section "Populating rootfsA partition..."
 
 mount "${SDCARD}2" .mnt || exit 2
 cp ${OUTPUT_PREFIX}images/zImage .mnt
+cp ${OUTPUT_PREFIX}images/rootfs.cpio.uboot .mnt
 umount .mnt
 
 section "Populating rootfsB partition..."
 
 mount "${SDCARD}3" .mnt || exit 2
 cp ${OUTPUT_PREFIX}images/zImage .mnt
+cp ${OUTPUT_PREFIX}images/rootfs.cpio.uboot .mnt
 umount .mnt
 sync
 
@@ -202,7 +203,7 @@ sync
 section "Populating writable user partition..."
 
 mount "${SDCARD}4" .mnt || exit 2
-cp -Rfv ${OUTPUT_PREFIX}images/sdcard/ .mnt
+cp -Rfv ${OUTPUT_PREFIX}images/sdcard/. .mnt
 umount .mnt
 sync
 

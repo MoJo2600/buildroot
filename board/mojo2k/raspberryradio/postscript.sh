@@ -19,7 +19,8 @@ mv ${TARGET}/../images/bcm2835-rpi-b.dtb ${TARGET}/../images/rpi-firmware/
 cp -Rfv ${BR_ROOT}/board/mojo2k/raspberryradio/sdcard ${TARGET}/../images
 
 # Add mountpoint for second partition
-echo "/dev/mmcblk0p4	/sdcard	ext4	rw,auto	0	0" >> ${TARGET}/etc/fstab
+echo "/dev/mmcblk0p4	/sdcard	ext4	rw	0	0" >> ${TARGET}/etc/fstab
+echo "/dev/mmcblk0p1	/boot	vfat	rw	0	0" >> ${TARGET}/etc/fstab
 
 # Add mdev rule for wifi
 echo "wlan[0-9]*      0:0 0660 */etc/mdev.wlan" >> ${TARGET}/etc/mdev.conf
