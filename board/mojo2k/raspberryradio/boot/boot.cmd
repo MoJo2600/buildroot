@@ -1,6 +1,5 @@
-mmc dev 0
-fatload mmc 0:2 ${kernel_addr_r} zImage
-fatload mmc 0:2 ${ramdisk_addr_r} rootfs.cpio.uboot
-#setenv bootargs 'dwc_otg.fiq_fix_enable=1 sdhci-bcm2708.sync_after_dma=0 dwc_otg.lpm_enable=0 console=tty1 rootwait init=/bin/sh'
-setenv bootargs 'dwc_otg.fiq_fix_enable=1 sdhci-bcm2708.sync_after_dma=0 dwc_otg.lpm_enable=0 console=tty1 rootwait root=/dev/ram0'
-bootz ${kernel_addr_r} ${ramdisk_addr_r}
+setenv bootdelay 0
+setenv bootargs 'dma.dmachans=0x7f35 bcm2708_fb.fbwidth=1440 bcm2708_fb.fbheight=900 bcm2708.boardrev=0xe bcm2708.serial=0x20e34aeb smsc95xx.macaddr=${usbethaddr} sdhci-bcm2708.emmc_clock_freq=250000000 vc earlyprintk console=ttyAMA0 console=tty1 root=/dev/ram0 rootwait'
+fatload mmc 0:1 ${loadaddr} zImage
+bootz ${loadaddr}
+

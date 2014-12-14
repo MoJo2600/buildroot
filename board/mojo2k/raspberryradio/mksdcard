@@ -181,7 +181,8 @@ section "Populating boot partition..."
 
 mount "${SDCARD}1" .mnt || exit 2
 cp ${OUTPUT_PREFIX}images/rpi-firmware/* .mnt
-#cp ${OUTPUT_PREFIX}images/boot/* .mnt
+#compile build script
+${OUTPUT_PREFIX}host/usr/bin/mkimage -C none -A arm -T script -d board/mojo2k/raspberryradio/boot/boot.cmd .mnt/boot.scr 
 umount .mnt
 
 section "Populating rootfsA partition..."
@@ -202,7 +203,7 @@ sync
 section "Populating writable user partition..."
 
 mount "${SDCARD}4" .mnt || exit 2
-cp -Rfv ${OUTPUT_PREFIX}images/sdcard/ .mnt
+cp -Rfv ${OUTPUT_PREFIX}images/sdcard/. .mnt
 umount .mnt
 sync
 
