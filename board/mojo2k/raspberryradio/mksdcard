@@ -120,30 +120,14 @@ n
 p
 1
 
-+50M
++100M
 n
 p
 2
-
-+100M
-n
-p
-3
-
-+100M
-n
-p
-4
 
 
 t
 1
-e
-t
-2
-e
-t
-3
 e
 a
 1
@@ -162,13 +146,11 @@ section "Formatting partitions..."
 # TODO: bootpartition for u-boot, rootfsa and rootfsb for system / update
 
 ${MKFS_VFAT} -F 16 -n BOOT -I "${SDCARD}1" || exit 1
-${MKFS_VFAT} -F 16 -n ROOTFSA -I "${SDCARD}2" || exit 1
-${MKFS_VFAT} -F 16 -n ROOTFSB -I "${SDCARD}3" || exit 1
-${MKFS_EXT4} -L USER "${SDCARD}4" || exit 1
+${MKFS_EXT4} -L USER "${SDCARD}2" || exit 1
 
 # No journal, write directly to card for user data
-${TUNE2FS} -o journal_data_writeback "${SDCARD}4"
-${TUNE2FS} -O ^has_journal "${SDCARD}4"
+${TUNE2FS} -o journal_data_writeback "${SDCARD}2"
+${TUNE2FS} -O ^has_journal "${SDCARD}2"
 sync
 
 # prepare to fill partitions
@@ -181,20 +163,9 @@ section "Populating boot partition..."
 
 mount "${SDCARD}1" .mnt || exit 2
 cp ${OUTPUT_PREFIX}images/rpi-firmware/* .mnt
+cp ${OUTPUT_PREFIX}zImage .mnt
 #compile build script
 ${OUTPUT_PREFIX}host/usr/bin/mkimage -C none -A arm -T script -d board/mojo2k/raspberryradio/boot/boot.cmd .mnt/boot.scr 
-umount .mnt
-
-section "Populating rootfsA partition..."
-
-mount "${SDCARD}2" .mnt || exit 2
-cp ${OUTPUT_PREFIX}images/zImage .mnt
-umount .mnt
-
-section "Populating rootfsB partition..."
-
-mount "${SDCARD}3" .mnt || exit 2
-cp ${OUTPUT_PREFIX}images/zImage .mnt
 umount .mnt
 sync
 
@@ -202,7 +173,7 @@ sync
 
 section "Populating writable user partition..."
 
-mount "${SDCARD}4" .mnt || exit 2
+mount "${SDCARD}2" .mnt || exit 2
 cp -Rfv ${OUTPUT_PREFIX}images/sdcard/. .mnt
 umount .mnt
 sync

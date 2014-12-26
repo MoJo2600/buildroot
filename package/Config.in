@@ -142,6 +142,7 @@ endif
 endmenu
 
 menu "Filesystem and flash utilities"
+	source "package/aufs-modules/Config.in"
 	source "package/btrfs-progs/Config.in"
 	source "package/cifs-utils/Config.in"
 	source "package/cramfs/Config.in"

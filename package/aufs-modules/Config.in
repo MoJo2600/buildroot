@@ -1,0 +1,8 @@
+config BR2_PACKAGE_AUFS_MODULES
+	bool "aufs-modules"
+	depends on BR2_LINUX_KERNEL
+	help
+          Aufs
+
+comment "aufs-modules needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
