@@ -6,6 +6,13 @@ config BR2_PACKAGE_UBOOT_TOOLS
 	  http://www.denx.de/wiki/U-Boot/WebHome
 
 if BR2_PACKAGE_UBOOT_TOOLS
+config BR2_PACKAGE_UBOOT_TOOLS_BOARDNAME
+        string "U-Boot board name"
+        help
+          One of U-Boot supported boards to be built.
+          This will be suffixed with _config to meet U-Boot standard naming.
+          See boards.cfg in U-Boot source code for the list of available
+          configurations.
 
 config BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE
 	bool "mkimage"

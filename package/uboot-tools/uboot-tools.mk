@@ -4,11 +4,44 @@
 #
 ################################################################################
 
-UBOOT_TOOLS_VERSION = 2014.07
+UBOOT_TOOLS_VERSION = 2015.01-rc3
 UBOOT_TOOLS_SOURCE = u-boot-$(UBOOT_TOOLS_VERSION).tar.bz2
 UBOOT_TOOLS_SITE = ftp://ftp.denx.de/pub/u-boot
 UBOOT_TOOLS_LICENSE = GPLv2+
 UBOOT_TOOLS_LICENSE_FILES = Licenses/gpl-2.0.txt
+
+UBOOT_TOOLS_BOARD_NAME = $(call qstrip,$(BR2_PACKAGE_UBOOT_TOOLS_BOARDNAME))
+
+# Helper function to fill the U-Boot config.h file.
+# Argument 1: option name
+# Argument 2: option value
+# If the option value is empty, this function does nothing.
+define insert_define
+$(if $(call qstrip,$(2)),
+        @echo "#ifdef $(strip $(1))" >> $(@D)/include/config.h
+        @echo "#undef $(strip $(1))" >> $(@D)/include/config.h
+        @echo "#endif" >> $(@D)/include/config.h
+        @echo '#define $(strip $(1)) $(call qstrip,$(2))' >> $(@D)/include/confi$
+endef
+
+define UBOOT_TOOLS_CONFIGURE_CMDS
+        $(TARGET_CONFIGURE_OPTS) $(UBOOT_CONFIGURE_OPTS)        \
+                $(MAKE) -C $(@D) $(UBOOT_MAKE_OPTS)             \
+                $(UBOOT_TOOLS_BOARD_NAME)_config
+        @echo >> $(@D)/include/config.h
+        @echo "/* Add a wrapper around the values Buildroot sets. */" >> $(@D)/include/config.h
+        @echo "#ifndef __BR2_ADDED_CONFIG_H" >> $(@D)/include/config.h
+        @echo "#define __BR2_ADDED_CONFIG_H" >> $(@D)/include/config.h
+        $(call insert_define,DATE,$(DATE))
+        $(call insert_define,CONFIG_LOAD_SCRIPTS,1)
+        $(call insert_define,CONFIG_IPADDR,$(BR2_TARGET_UBOOT_IPADDR))
+        $(call insert_define,CONFIG_GATEWAYIP,$(BR2_TARGET_UBOOT_GATEWAY))
+        $(call insert_define,CONFIG_NETMASK,$(BR2_TARGET_UBOOT_NETMASK))
+        $(call insert_define,CONFIG_SERVERIP,$(BR2_TARGET_UBOOT_SERVERIP))
+        $(call insert_define,CONFIG_ETHADDR,$(BR2_TARGET_UBOOT_ETHADDR))
+        $(call insert_define,CONFIG_ETH1ADDR,$(BR2_TARGET_UBOOT_ETH1ADDR))
+        @echo "#endif /* __BR2_ADDED_CONFIG_H */" >> $(@D)/include/config.h
+endef
 
 define UBOOT_TOOLS_BUILD_CMDS
 	$(MAKE) -C $(@D) 			\
@@ -21,6 +54,7 @@ define UBOOT_TOOLS_BUILD_CMDS
 		CROSS_COMPILE="$(TARGET_CROSS)"	\
 		CFLAGS="$(TARGET_CFLAGS)"	\
 		LDFLAGS="$(TARGET_LDFLAGS)"	\
+		-L "$(HOST_DIR)"		\
 		env no-dot-config-targets=env
 endef
 
@@ -64,6 +98,15 @@ endef
 
 $(eval $(generic-package))
 $(eval $(host-generic-package))
+
+ifeq ($(BR2_PACKAGE_UBOOT_TOOLS),y)
+# we NEED a board name unless we're at make source
+ifeq ($(filter source,$(MAKECMDGOALS)),)
+ifeq ($(UBOOT_TOOLS_BOARD_NAME),)
+$(error NO U-Boot board name set. Check your BR2_PACKAGE_UBOOT_TOOLS_BOARDNAME setting)
+endif
+endif
+endif # BR2_PACKAGE_UBOOT_TOOLS
 
 # Convenience variables for other mk files that make use of mkimage
 

@@ -1,0 +1,14 @@
+diff --git a/tools/env/fw_env.c b/tools/env/fw_env.c
+index 1173eea..698fe51 100644
+--- a/tools/env/fw_env.c
++++ b/tools/env/fw_env.c
+@@ -8,6 +8,9 @@
+  * SPDX-License-Identifier:	GPL-2.0+
+  */
+ 
++/* FIXME: Do not include this */
++#include <linux/kconfig.h>
++
+ #include <errno.h>
+ #include <env_flags.h>
+ #include <fcntl.h>
