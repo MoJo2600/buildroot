@@ -4,7 +4,7 @@ TARGET="${1}"
 BR_ROOT=$PWD
 
 # copy System.map
-cp ${TARGET}/../build/linux-rpi-3.12.y/System.map ${TARGET}/System.map
+#cp ${TARGET}/../build/linux-rpi-3.12.y/System.map ${TARGET}/System.map
 
 #cp ${BR_ROOT}/board/mojo2k/raspberryradio/boot/boot.cmd ${TARGET}/../images/rpi-firmware/
 #${BR_ROOT}/output/host/usr/bin/mkimage -C none -A arm -T script -d ${BR_ROOT}/board/mojo2k/raspberryradio/boot/boot.cmd ${TARGET}/../images/rpi-firmware/boot.scr

@@ -88,6 +88,16 @@ define HOST_UBOOT_TOOLS_BUILD_CMDS
 		HOSTCC="$(HOSTCC)"		\
 		HOSTCFLAGS="$(HOST_CFLAGS)"	\
 		HOSTLDFLAGS="$(HOST_LDFLAGS)"	\
+		defconfig
+	$(MAKE1) -C $(@D) 			\
+		HOSTCC="$(HOSTCC)"		\
+		HOSTCFLAGS="$(HOST_CFLAGS)"	\
+		HOSTLDFLAGS="$(HOST_LDFLAGS)"	\
+		silentoldconfig
+	$(MAKE1) -C $(@D) 			\
+		HOSTCC="$(HOSTCC)"		\
+		HOSTCFLAGS="$(HOST_CFLAGS)"	\
+		HOSTLDFLAGS="$(HOST_LDFLAGS)"	\
 		tools-only
 endef
 
