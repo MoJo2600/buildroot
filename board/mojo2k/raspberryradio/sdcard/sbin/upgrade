@@ -1,0 +1,61 @@
+#!/bin/bash
+
+if [ ! -z "$1" ] ; then
+  FIRMWAREFILE="$1"
+  if [ -e ${FIRMWAREFILE} ] ; then
+    echo "Using firmware ${FIRMWAREFILE}"
+  else
+    echo "[CRIT] Firmwarefile ${FIRMWAREFILE} does not exist; process aborted!Â"
+    exit 1
+  fi
+else
+  echo "[CRIT] Parameter firmwarefile missing; process aborted!"
+  exit 1
+fi
+
+# -- OPERATIONS --
+
+function switchfirmware {
+  if [ ! -z "$1" ] ; then
+    _firmware="$1"
+  else 
+    echo "[CRIT] Parameter missing (switchfirmware); process aborted!"
+    exit 1
+  fi
+
+  echo "switching to zImage${_firmware}"
+  tar xfv ${FIRMWAREFILE} -C ${MOUNTDIR} zImage
+  rm ${MOUNTDIR}/zImage${_firmware}
+  mv ${MOUNTDIR}/zImage ${MOUNTDIR}/zImage${_firmware}
+  tar xfv ${FIRMWAREFILE} rpi-firmware -C ${MOUNTDIR}
+  mv ${MOUNTDIR}/rpi-firmware/* ${MOUNTDIR}
+  rmdir ${MOUNTDIR}/rpi-firmware
+  cp -v ${MOUNTDIR}/boot${_firmware}.scr ${MOUNTDIR}/boot.scr
+  echo "${_firmware}" > ${MOUNTDIR}/boot.txt
+}
+
+# -- LOGIC
+
+MOUNTDIR="/.firmmnt"
+
+# create temporary mount directory
+mkdir ${MOUNTDIR}
+
+# mount boot partition
+mount /dev/mmcblk0p1 ${MOUNTDIR}
+
+BOOTIMAGE=`cat ${MOUNTDIR}/boot.txt`
+CURZIMAGE="zImage${BOOTIMAGE}"
+echo "Currently booting ${CURZIMAGE}"
+
+if [ ${BOOTIMAGE} == "A" ] ; then
+  switchfirmware "B"
+else
+  switchfirmware "A"
+fi
+
+# unmount boot partition
+umount ${MOUNTDIR}
+
+# remove temporary mount directory
+rmdir ${MOUNTDIR}

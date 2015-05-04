@@ -1,0 +1,3 @@
+#!/bin/bash
+# Start radio when wifi connection established
+/usr/bin/supervisorctl start radio
