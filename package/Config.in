@@ -526,6 +526,7 @@ menu "external python modules"
 	source "package/python-versiontools/Config.in"
 	source "package/python-rpigpio/Config.in"
 	source "package/python-mpdlcd/Config.in"
+	source "package/python-mradio/Config.in"
 	source "package/python-lcdproc/Config.in"
 	source "package/python-mpd2/Config.in"
 endmenu

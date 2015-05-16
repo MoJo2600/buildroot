@@ -9,7 +9,7 @@ iface wlan0 inet static
   dns-nameservers 192.168.178.1 8.8.8.8
   pre-up wpa_supplicant -Dwext -i wlan0 -c /sdcard/conf/wifi.conf -B
   post-down killall -q wpa_supplicant
-#  up route add default gw 192.168.178.1
+  up /usr/sbin/wpa_cli -a /sbin/wpa_cli_actionscript.sh
 
 allow-hotplug wlan0
 

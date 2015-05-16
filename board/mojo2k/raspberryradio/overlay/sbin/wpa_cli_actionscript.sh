@@ -1,36 +1,21 @@
-#!/bin/sh
+#!/bin/bash
 
 # Sanity checks
 DAEMON=/sbin/nfs_automount
 test -x ${DAEMON} || exit 0
 test -f /etc/nfs_automount.conf || exit 0
 
-start() {
+case "$2" in
+    CONNECTED)
+        # connection established
 	echo -n "Starting automount: "
 	start-stop-daemon --start --quiet --background --exec ${DAEMON} \
 		&& echo "OK" || echo "FAIL"
-}
-
-stop() {
+        ;;
+    DISCONNECTED)
+        # connection lost";
 	echo -n "Stopping automount: "
 	start-stop-daemon --stop --quiet --exec ${DAEMON} \
 		&& echo "OK" || echo "FAIL"
-}
-
-case "$1" in
-	start)
-		start
-		;;
-	stop)
-		stop
-		;;
-	restart|reload)
-		stop
-		sleep 1
-		start
-		;;
-	*)
-		echo "Usage: $0 {start|stop|restart}"
-		exit 1
+        ;;
 esac
-

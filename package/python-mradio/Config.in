@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_MRADIO
+	bool "python-mradio"
+	depends on BR2_PACKAGE_PYTHON 
+        select BR2_PACKAGE_PYTHON_SETUPTOOLS
+	help
+	  A webradio script, based on mpdlcd.
+
